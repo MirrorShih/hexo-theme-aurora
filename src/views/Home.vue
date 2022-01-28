@@ -78,7 +78,6 @@
       <div>
         <Sidebar>
           <Profile :author="mainAuthor" />
-          <RecentComment />
           <TagBox />
         </Sidebar>
       </div>
@@ -111,7 +110,6 @@ export default defineComponent({
     Sidebar,
     TagBox,
     Paginator,
-    RecentComment,
     Profile
   },
   setup() {
