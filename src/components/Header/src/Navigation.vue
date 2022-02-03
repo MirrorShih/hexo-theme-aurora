@@ -47,6 +47,12 @@
           >
             {{ route.i18n.en }}
           </span>
+          <span
+            class="relative z-50"
+            v-else-if="$i18n.locale === 'tw' && route.i18n.tw"
+          >
+            {{ route.i18n.tw }}
+          </span>
           <span class="relative z-50" v-else>{{ route.name }}</span>
         </div>
         <Dropdown
@@ -76,6 +82,12 @@
           >
             {{ route.i18n.en }}
           </span>
+          <span
+            class="relative z-50"
+            v-else-if="$i18n.locale === 'tw' && route.i18n.tw"
+          >
+            {{ route.i18n.tw }}
+          </span>
           <span class="relative z-50" v-else>{{ route.name }}</span>
           <DropdownMenu>
             <DropdownItem
@@ -94,6 +106,12 @@
                 v-else-if="$i18n.locale === 'en' && sub.i18n.en"
               >
                 {{ sub.i18n.en }}
+              </span>
+              <span
+                class="relative z-50"
+                v-else-if="$i18n.locale === 'tw' && route.i18n.tw"
+              >
+                {{ route.i18n.tw }}
               </span>
               <span class="relative z-50" v-else>{{ sub.name }}</span>
             </DropdownItem>
