@@ -103,7 +103,7 @@ export class ThemeMenu implements ObMenu {
         i18n: {
           cn: '归档',
           en: 'Archives',
-          tw: '文章'
+          tw: '文庫'
         }
       },
       Tags: {
