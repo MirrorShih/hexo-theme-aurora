@@ -48,11 +48,13 @@ export default defineComponent({
     }
 
     const updateTitle = (locale: string | undefined) => {
-      const currentLocale = locale === 'cn' ? 'cn' : 'en'
+      type lang = 'cn' | 'tw' | 'en'
+      const currentLocale = locale === undefined ? 'en' : locale
       const routeInfo =
         appStore.themeConfig.menu.menus[String(route.params.slug)]
       pageTitle.value =
-        (routeInfo.i18n && routeInfo.i18n[currentLocale]) || routeInfo.name
+        (routeInfo.i18n && routeInfo.i18n[currentLocale as lang]) ||
+        routeInfo.name
       metaStore.setTitle(pageTitle.value)
     }
 

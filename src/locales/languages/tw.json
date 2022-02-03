@@ -1,0 +1,74 @@
+{
+  "menu": {
+    "home": "首頁",
+    "about": "關於",
+    "archives": "文章",
+    "categories": "分類",
+    "tags": "標籤",
+    "post": "文章",
+    "message-board": "留言板",
+    "search": "搜索結果",
+    "not-found": "無法找到頁面"
+  },
+  "home": {
+    "recommended": "推薦文章"
+  },
+  "titles": {
+    "articles": "文章列表",
+    "about": "關於我",
+    "category_list": "分類目錄",
+    "tag_list": "標籤目錄",
+    "toc": "文章目錄",
+    "comment": "評論區",
+    "recent_comment": "最近評論"
+  },
+  "settings": {
+    "months": [
+      "一月",
+      "二月",
+      "三月",
+      "四月",
+      "五月",
+      "六月",
+      "七月",
+      "八月",
+      "九月",
+      "十月",
+      "十一月",
+      "十二月"
+    ],
+    "articles": "文章",
+    "categories": "分類",
+    "tags": "標籤",
+    "words": "文字",
+    "visitor_count": "總共訪客數",
+    "visit_count": "總共訪問數",
+    "button-all": "全部",
+    "paginator": {
+      "newer": "新的",
+      "older": "以往",
+      "prev": "上一篇更回味",
+      "next": "下一篇更精彩"
+    },
+    "more-tags": "查看更多",
+    "admin-user": "博主",
+    "shared-on": "發佈於",
+    "recently-search": "最近搜索",
+    "search-result": "一共找到 [total] 個結果",
+    "no-recent-search": "沒有最近搜索記錄。",
+    "no-search-result": "沒有找到任何記錄。",
+    "cmd-to-select": "查看",
+    "cmd-to-navigate": "選擇",
+    "cmd-to-close": "關閉",
+    "searched-by": "搜索引擎",
+    "tips-back-to-top": "返回頂部",
+    "tips-open-menu": "打開菜單",
+    "tips-back-to-home": "返回首頁",
+    "tips-open-search": "打開搜索",
+    "default-category": "文章",
+    "default-tag": "未分類",
+    "empty-tag": "目前沒有標簽",
+    "pinned": "置頂",
+    "featured": "推薦"
+  }
+}

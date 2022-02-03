@@ -14,6 +14,12 @@ const QUOTE_LANG = {
     warning: '注意',
     danger: '特别注意',
     details: '隐藏内容'
+  },
+  tw:{
+    tip: '提示',
+    warning: '注意',
+    danger: '特别注意',
+    details: '隱藏內容'
   }
 }
 const SVG = {

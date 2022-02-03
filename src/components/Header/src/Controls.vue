@@ -16,10 +16,12 @@
         <svg-icon icon-class="globe" />
         <span v-if="$i18n.locale == 'cn'">中文</span>
         <span v-if="$i18n.locale == 'en'">EN</span>
+        <span v-if="$i18n.locale == 'tw'">中文</span>
       </span>
       <DropdownMenu>
         <DropdownItem name="en">English</DropdownItem>
-        <DropdownItem name="cn">中文</DropdownItem>
+        <DropdownItem name="cn">简体中文</DropdownItem>
+        <DropdownItem name="tw">繁體中文</DropdownItem>
       </DropdownMenu>
     </Dropdown>
     <span no-hover-effect class="ob-drop-shadow" data-dia="light-switch">

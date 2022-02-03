@@ -75,7 +75,8 @@ export class ThemeMenu implements ObMenu {
       path: '/',
       i18n: {
         cn: '首页',
-        en: 'Home'
+        en: 'Home',
+        tw: '首頁'
       }
     })
   }
@@ -92,7 +93,8 @@ export class ThemeMenu implements ObMenu {
         path: '/about',
         i18n: {
           cn: '关于',
-          en: 'About'
+          en: 'About',
+          tw: '關於'
         }
       },
       Archives: {
@@ -100,7 +102,8 @@ export class ThemeMenu implements ObMenu {
         path: '/archives',
         i18n: {
           cn: '归档',
-          en: 'Archives'
+          en: 'Archives',
+          tw: '文章'
         }
       },
       Tags: {
@@ -108,7 +111,8 @@ export class ThemeMenu implements ObMenu {
         path: '/tags',
         i18n: {
           cn: '标签',
-          en: 'Tags'
+          en: 'Tags',
+          tw: '標籤'
         }
       }
     }
@@ -139,7 +143,7 @@ export class Menu {
   /** Vue router path for the menu */
   path = ''
   /** Translation key for vue-i18n */
-  i18n: { cn?: string; en?: string } = {}
+  i18n: { cn?: string; en?: string; tw?: string } = {}
   /** Sub menus */
   children: Menu[] = []
 
