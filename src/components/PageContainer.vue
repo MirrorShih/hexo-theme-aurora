@@ -60,7 +60,7 @@
       </div>
       <div class="col-span-1">
         <Sidebar>
-          <Profile author="blog-author" />
+          <Profile :author="mainAuthor" />
           <Toc :toc="post.toc" />
         </Sidebar>
       </div>
@@ -80,6 +80,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { Sidebar, Toc, Profile } from '@/components/Sidebar'
 import { useCommonStore } from '@/stores/common'
+import { useAppStore } from '@/stores/app'
 
 export default defineComponent({
   name: 'ObPageContainer',
@@ -101,6 +102,7 @@ export default defineComponent({
     const { t } = useI18n()
     const post = toRefs(props).post
     const title = toRefs(props).title
+    const appStore = useAppStore()
 
     watch(
       () => post.value.covers,
@@ -122,6 +124,10 @@ export default defineComponent({
       pageTitle: computed(() => {
         if (title.value !== '') return title.value
         return post.value.title
+      }),
+      mainAuthor: computed(() => {
+        let author = appStore.themeConfig.site.author.toLocaleLowerCase()
+        return author.replace(/[\s]+/g, '-')
       }),
       t
     }
