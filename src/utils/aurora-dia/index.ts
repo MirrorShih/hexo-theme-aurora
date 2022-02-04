@@ -163,7 +163,7 @@ class AuroraBotSoftware {
       } else if (!this.userActionTimer) {
         this.userActionTimer = setInterval(() => {
           this.showMessage(this.randomSelection(this.messages), 6000, 9)
-        }, 20000)
+        }, 10000)
       }
     }, 1000)
 
