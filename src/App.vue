@@ -7,7 +7,7 @@
       tabindex="-1"
       :style="cssVariables"
     >
-      <HeaderMain />
+      <HeaderMain @controls-click="updatePagelink" />
       <div class="app-banner app-banner-image" :style="headerImage" />
       <div class="app-banner app-banner-screen" :style="headerBaseBackground" />
       <div class="relative z-10">
@@ -110,6 +110,26 @@ export default defineComponent({
           intialCopyrightScript()
         }
       })
+    }
+
+    const updatePagelink = (): void => {
+      if (appStore.themeConfig.plugins.copy_protection.enable) {
+        const locale = appStore.locale
+        const linkPlaceholder =
+          locale === 'cn'
+            ? appStore.themeConfig.plugins.copy_protection.link.cn
+            : appStore.themeConfig.plugins.copy_protection.link.en
+        const authorPlaceholder =
+          locale === 'cn'
+            ? appStore.themeConfig.plugins.copy_protection.author.cn
+            : appStore.themeConfig.plugins.copy_protection.author.en
+        const licensePlaceholder =
+          locale === 'cn'
+            ? appStore.themeConfig.plugins.copy_protection.license.cn
+            : appStore.themeConfig.plugins.copy_protection.license.en
+
+        pagelink = `\n\n---------------------------------\n${authorPlaceholder}: ${appStore.themeConfig.site.author}\n${linkPlaceholder}: ${document.location.href}\n${licensePlaceholder}`
+      }
     }
 
     const copyEventHandler = (event: any) => {
@@ -220,7 +240,8 @@ export default defineComponent({
       }),
       appWrapperClass,
       loadingBarClass,
-      handleOpenModal
+      handleOpenModal,
+      updatePagelink
     }
   }
 })
