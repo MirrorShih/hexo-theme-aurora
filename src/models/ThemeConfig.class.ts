@@ -520,15 +520,18 @@ export class Plugins implements PluginsData {
     enable: true,
     author: {
       cn: '',
-      en: ''
+      en: '',
+      tw: ''
     },
     link: {
       cn: '',
-      en: ''
+      en: '',
+      tw: ''
     },
     license: {
       cn: '',
-      en: ''
+      en: '',
+      tw: ''
     }
   }
   aurora_bot = {
