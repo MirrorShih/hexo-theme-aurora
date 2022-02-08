@@ -124,14 +124,20 @@ export default defineComponent({
         const linkPlaceholder =
           locale === 'cn'
             ? appStore.themeConfig.plugins.copy_protection.link.cn
+            : locale === 'tw'
+            ? appStore.themeConfig.plugins.copy_protection.link.tw
             : appStore.themeConfig.plugins.copy_protection.link.en
         const authorPlaceholder =
           locale === 'cn'
             ? appStore.themeConfig.plugins.copy_protection.author.cn
+            : locale === 'tw'
+            ? appStore.themeConfig.plugins.copy_protection.author.tw
             : appStore.themeConfig.plugins.copy_protection.author.en
         const licensePlaceholder =
           locale === 'cn'
             ? appStore.themeConfig.plugins.copy_protection.license.cn
+            : locale === 'tw'
+            ? appStore.themeConfig.plugins.copy_protection.license.tw
             : appStore.themeConfig.plugins.copy_protection.license.en
 
         pagelink = `\n\n---------------------------------\n${authorPlaceholder}: ${appStore.themeConfig.site.author}\n${linkPlaceholder}: ${document.location.href}\n${licensePlaceholder}`
