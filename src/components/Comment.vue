@@ -14,7 +14,7 @@
     <SubTitle :title="'titles.comment'" />
     <div id="gitalk-container"></div>
     <div id="vcomments"></div>
-    <div ref="giscus_container"></div>
+    <div class="giscus"></div>
   </div>
 </template>
 
@@ -173,7 +173,7 @@ export default defineComponent({
           appStore.themeConfig.plugins.giscus.lang
         )
         giscus.setAttribute('crossorigin', 'anonymous')
-        ;(giscus_container as any).appendChild(giscus)
+        document.head.appendChild(giscus)
       }
     }
 
