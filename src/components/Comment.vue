@@ -14,6 +14,7 @@
     <SubTitle :title="'titles.comment'" />
     <div id="gitalk-container"></div>
     <div id="vcomments"></div>
+    <div ref="giscus_container"></div>
   </div>
 </template>
 
@@ -32,7 +33,7 @@ declare const Gitalk: any
 declare const Valine: any
 
 import { useAppStore } from '@/stores/app'
-import { defineComponent, onMounted, toRefs, watch } from 'vue'
+import { defineComponent, onMounted, ref, toRefs, watch } from 'vue'
 import { SubTitle } from '@/components/Title'
 import { usePostStore } from '@/stores/post'
 
@@ -62,6 +63,7 @@ export default defineComponent({
     const postUid = toRefs(props).uid
     const appStore = useAppStore()
     const postStore = usePostStore()
+    const giscus_container = ref(null)
 
     const enabledComment = (
       postTitle: string,
@@ -129,6 +131,49 @@ export default defineComponent({
           avatarForce: appStore.themeConfig.plugins.valine.avatarForce,
           path: window.location.pathname // Make sure updating pathname
         })
+      } else if (appStore.themeConfig.plugins.giscus.enable) {
+        let giscus = document.createElement('script')
+        giscus.async = true
+        giscus.setAttribute('src', 'https://giscus.app/client.js')
+        giscus.setAttribute(
+          'data-repo',
+          appStore.themeConfig.plugins.giscus.repo
+        )
+        giscus.setAttribute(
+          'data-repo-id',
+          appStore.themeConfig.plugins.giscus.repo_id
+        )
+        giscus.setAttribute(
+          'data-category',
+          appStore.themeConfig.plugins.giscus.category
+        )
+        giscus.setAttribute(
+          'data-category-id',
+          appStore.themeConfig.plugins.giscus.category_id
+        )
+        giscus.setAttribute(
+          'data-mapping',
+          appStore.themeConfig.plugins.giscus.mapping
+        )
+        giscus.setAttribute(
+          'data-reactions-enabled',
+          appStore.themeConfig.plugins.giscus.reactions_enabled
+        )
+        giscus.setAttribute(
+          'data-emit-metadata',
+          appStore.themeConfig.plugins.giscus.emit_meta_data
+        )
+        giscus.setAttribute(
+          'data-input-position',
+          appStore.themeConfig.plugins.giscus.input_position
+        )
+        giscus.setAttribute('data-theme', 'light')
+        giscus.setAttribute(
+          'data-lang',
+          appStore.themeConfig.plugins.giscus.lang
+        )
+        giscus.setAttribute('crossorigin', 'anonymous')
+        ;(giscus_container as any).appendChild(giscus)
       }
     }
 

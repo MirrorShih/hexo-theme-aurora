@@ -130,6 +130,18 @@ valine:
   admin: 'TriDiamond'
   recentComment: true
 
+giscus:
+  enable: false
+  repo: ''
+  repo_id: ''
+  category: ''
+  category_id: ''
+  mapping: ''
+  lang: ''
+  reactions_enabled: ''
+  emit_meta_data: ''
+  input_position: ''
+
 # Enable Busuanzi statistic plugin
 # see http://ibruce.info/2015/04/04/busuanzi/
 busuanzi:

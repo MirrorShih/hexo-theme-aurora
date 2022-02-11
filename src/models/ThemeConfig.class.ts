@@ -456,6 +456,19 @@ interface PluginsData {
     admin: string
     recentComment: boolean
   }
+
+  giscus: {
+    enable: boolean
+    repo: string
+    repo_id: string
+    category: string
+    category_id: string
+    mapping: string
+    lang: string
+    reactions_enabled: string
+    emit_meta_data: string
+    input_position: string
+  }
   recent_comments: boolean
   busuanzi: {
     enable: boolean
@@ -511,6 +524,18 @@ export class Plugins implements PluginsData {
     avatarForce: false,
     admin: '',
     recentComment: false
+  }
+  giscus = {
+    enable: false,
+    repo: '',
+    repo_id: '',
+    category: '',
+    category_id: '',
+    mapping: '',
+    lang: '',
+    reactions_enabled: '',
+    emit_meta_data: '',
+    input_position: ''
   }
   recent_comments = false
   busuanzi = {
