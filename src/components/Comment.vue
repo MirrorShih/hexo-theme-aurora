@@ -169,7 +169,7 @@ export default defineComponent({
         )
         giscus.setAttribute(
           'data-theme',
-          'http://localhost:3000/themes/aurora.css'
+          'https://css.mirrorshih.repl.co/style.css'
         )
         giscus.setAttribute(
           'data-lang',
