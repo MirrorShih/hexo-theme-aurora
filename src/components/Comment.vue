@@ -167,7 +167,10 @@ export default defineComponent({
           'data-input-position',
           appStore.themeConfig.plugins.giscus.input_position
         )
-        giscus.setAttribute('data-theme', 'light')
+        giscus.setAttribute(
+          'data-theme',
+          'http://localhost:3000/themes/aurora.css'
+        )
         giscus.setAttribute(
           'data-lang',
           appStore.themeConfig.plugins.giscus.lang
