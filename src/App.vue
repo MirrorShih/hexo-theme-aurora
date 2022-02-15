@@ -7,7 +7,7 @@
       tabindex="-1"
       :style="cssVariables"
     >
-      <HeaderMain @controls-click="updatePagelink" />
+      <HeaderMain />
       <div class="app-banner app-banner-image" :style="headerImage" />
       <div class="app-banner app-banner-screen" :style="headerBaseBackground" />
       <div class="relative z-10">
@@ -212,6 +212,8 @@ export default defineComponent({
         loadingBarClass.value['nprogress-custom-parent'] = newState
       }
     )
+
+    watch(() => appStore.locale, updatePagelink)
 
     return {
       title: computed(() => metaStore.getTitle),
