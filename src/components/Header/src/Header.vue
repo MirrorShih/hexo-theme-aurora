@@ -3,7 +3,7 @@
     <header class="site-header">
       <Logo />
       <Navigation />
-      <Controls @handle-click="controlsClick" />
+      <Controls />
     </header>
   </div>
 </template>
@@ -21,12 +21,6 @@ export default defineComponent({
   },
   props: {
     msg: String
-  },
-  setup(props, { emit }) {
-    const controlsClick = (): void => {
-      emit('controlsClick')
-    }
-    return { controlsClick }
   }
 })
 </script>

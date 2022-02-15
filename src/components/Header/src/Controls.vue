@@ -50,13 +50,12 @@ export default defineComponent({
     ThemeToggle,
     SearchModal
   },
-  setup(props, { emit }) {
+  setup() {
     const appStore = useAppStore()
     const searchStore = useSearchStore()
 
     const handleClick = (name: string): void => {
       appStore.changeLocale(name)
-      emit('handleClick')
     }
 
     const handleOpenModal = (status: boolean) => {
