@@ -132,9 +132,14 @@ export default defineComponent({
           path: window.location.pathname // Make sure updating pathname
         })
       } else if (appStore.themeConfig.plugins.giscus.enable) {
+        let old_giscus = document.getElementById('giscus')
+        if (old_giscus) {
+          document.head.removeChild(old_giscus)
+        }
         let giscus = document.createElement('script')
         giscus.async = true
         giscus.setAttribute('src', 'https://giscus.app/client.js')
+        giscus.setAttribute('id', 'giscus')
         giscus.setAttribute(
           'data-repo',
           appStore.themeConfig.plugins.giscus.repo
@@ -167,10 +172,14 @@ export default defineComponent({
           'data-input-position',
           appStore.themeConfig.plugins.giscus.input_position
         )
-        giscus.setAttribute(
-          'data-theme',
-          'https://css.mirrorshih.repl.co/style.css'
-        )
+        if (appStore.theme === 'theme-light') {
+          giscus.setAttribute(
+            'data-theme',
+            'https://css.mirrorshih.repl.co/style.css'
+          )
+        } else {
+          giscus.setAttribute('data-theme', 'light')
+        }
         giscus.setAttribute(
           'data-lang',
           appStore.themeConfig.plugins.giscus.lang
@@ -187,6 +196,19 @@ export default defineComponent({
         if (!oldValue && newValue) {
           const cachePost = postStore.cachePost
           enabledComment(cachePost.title, cachePost.body, cachePost.uid)
+        }
+      }
+    )
+
+    watch(
+      () => appStore.theme,
+      () => {
+        if (
+          !appStore.themeConfig.plugins.gitalk.enable &&
+          !appStore.themeConfig.plugins.valine.enable &&
+          appStore.themeConfig.plugins.giscus.enable
+        ) {
+          enabledComment(postTitle.value, postBody.value, postUid.value)
         }
       }
     )
