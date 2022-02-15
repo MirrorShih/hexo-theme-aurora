@@ -172,7 +172,7 @@ export default defineComponent({
           'data-input-position',
           appStore.themeConfig.plugins.giscus.input_position
         )
-        if (appStore.theme === 'theme-light') {
+        if (appStore.theme === 'theme-dark') {
           giscus.setAttribute(
             'data-theme',
             'https://css.mirrorshih.repl.co/style.css'
