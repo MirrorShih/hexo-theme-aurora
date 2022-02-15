@@ -175,10 +175,13 @@ export default defineComponent({
         if (appStore.theme === 'theme-dark') {
           giscus.setAttribute(
             'data-theme',
-            'https://css.mirrorshih.repl.co/style.css'
+            appStore.themeConfig.plugins.giscus.theme_dark
           )
         } else {
-          giscus.setAttribute('data-theme', 'light')
+          giscus.setAttribute(
+            'data-theme',
+            appStore.themeConfig.plugins.giscus.theme_light
+          )
         }
         giscus.setAttribute(
           'data-lang',

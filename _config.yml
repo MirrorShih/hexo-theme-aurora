@@ -141,6 +141,8 @@ giscus:
   reactions_enabled: ''
   emit_meta_data: ''
   input_position: ''
+  theme_light: ''
+  theme_dark: ''
 
 # Enable Busuanzi statistic plugin
 # see http://ibruce.info/2015/04/04/busuanzi/

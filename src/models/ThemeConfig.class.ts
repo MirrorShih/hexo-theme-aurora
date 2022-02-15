@@ -468,6 +468,8 @@ interface PluginsData {
     reactions_enabled: string
     emit_meta_data: string
     input_position: string
+    theme_light: string
+    theme_dark: string
   }
   recent_comments: boolean
   busuanzi: {
@@ -535,7 +537,9 @@ export class Plugins implements PluginsData {
     lang: '',
     reactions_enabled: '',
     emit_meta_data: '',
-    input_position: ''
+    input_position: '',
+    theme_light: '',
+    theme_dark: ''
   }
   recent_comments = false
   busuanzi = {
