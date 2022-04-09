@@ -5,6 +5,8 @@
  * @live2d by StevenJoeZhang <https://github.com/stevenjoezhang/live2d-widget>
  */
 
+const OpenCC = require('opencc-js')
+
 interface AWFConfig {
   resourcePath: string
 }
@@ -388,6 +390,8 @@ class AuroraBotSoftware {
   showQuote() {
     if (this.config.locale === 'cn') {
       this.getHitokoto()
+    } else if (this.config.locale === 'tw') {
+      this.getHitokotoTraditional()
     } else {
       this.getTheySaidSo()
     }
@@ -398,6 +402,15 @@ class AuroraBotSoftware {
       .then(response => response.json())
       .then(result => {
         this.showMessage(result.hitokoto, 6000, 9)
+      })
+  }
+
+  getHitokotoTraditional() {
+    const converter = OpenCC.Converter({ from: 'cn', to: 'tw' })
+    fetch('https://v1.hitokoto.cn')
+      .then(response => response.json())
+      .then(result => {
+        this.showMessage(converter(result.hitokoto), 6000, 9)
       })
   }
 
