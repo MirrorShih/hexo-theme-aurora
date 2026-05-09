@@ -185,8 +185,8 @@ export class Menu {
     this.i18n = menu.i18n ? menu.i18n : {}
     this.children = menu.children
       ? Object.keys(menu.children).map(
-          (key: string) => new Menu(menu.children[key])
-        )
+        (key: string) => new Menu(menu.children[key])
+      )
       : []
   }
 }
@@ -436,9 +436,9 @@ export class SiteMeta {
     locale: string
     prismjs: string[]
   } = {
-    locale: 'en',
-    prismjs: []
-  }
+      locale: 'en',
+      prismjs: []
+    }
   favicon = ''
 
   /**
@@ -508,6 +508,19 @@ export interface PluginsData {
     wordLimit: number | number[]
     pageSize: number
     commentSorting: string
+  }
+
+  giscus: {
+    enable: boolean
+    repo: string
+    repo_id: string
+    category: string
+    category_id: string
+    mapping: string
+    lang: string
+    reactions_enabled: string
+    emit_meta_data: string
+    input_position: string
   }
 
   recent_comments: boolean
@@ -588,6 +601,18 @@ export class Plugins implements PluginsData {
     wordLimit: 0,
     pageSize: 10,
     commentSorting: 'latest'
+  }
+  giscus = {
+    enable: false,
+    repo: '',
+    repo_id: '',
+    category: '',
+    category_id: '',
+    mapping: '',
+    lang: '',
+    reactions_enabled: '',
+    emit_meta_data: '',
+    input_position: ''
   }
   recent_comments = false
   busuanzi = {

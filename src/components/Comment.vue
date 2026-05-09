@@ -10,6 +10,7 @@
     <div id="vcomments"></div>
     <div id="tcomment"></div>
     <div id="waline"></div>
+    <div class="giscus"></div>
   </div>
 </template>
 
@@ -157,6 +158,65 @@ export default defineComponent({
           pageSize
         })
       }
+      else if(appStore.themeConfig.plugins.giscus.enable) {
+        let old_giscus = document.getElementById('giscus')
+        if (old_giscus) {
+          document.head.removeChild(old_giscus)
+        }
+        let giscus = document.createElement('script')
+        giscus.async = true
+        giscus.setAttribute('src', 'https://giscus.app/client.js')
+        giscus.setAttribute('id', 'giscus')
+        giscus.setAttribute(
+          'data-repo',
+          appStore.themeConfig.plugins.giscus.repo
+        )
+        giscus.setAttribute(
+          'data-repo-id',
+          appStore.themeConfig.plugins.giscus.repo_id
+        )
+        giscus.setAttribute(
+          'data-category',
+          appStore.themeConfig.plugins.giscus.category
+        )
+        giscus.setAttribute(
+          'data-category-id',
+          appStore.themeConfig.plugins.giscus.category_id
+        )
+        giscus.setAttribute(
+          'data-mapping',
+          appStore.themeConfig.plugins.giscus.mapping
+        )
+        giscus.setAttribute(
+          'data-reactions-enabled',
+          appStore.themeConfig.plugins.giscus.reactions_enabled
+        )
+        giscus.setAttribute(
+          'data-emit-metadata',
+          appStore.themeConfig.plugins.giscus.emit_meta_data
+        )
+        giscus.setAttribute(
+          'data-input-position',
+          appStore.themeConfig.plugins.giscus.input_position
+        )
+        if (appStore.theme === 'theme-dark') {
+          giscus.setAttribute(
+            'data-theme',
+            appStore.themeConfig.plugins.giscus.theme_dark
+          )
+        } else {
+          giscus.setAttribute(
+            'data-theme',
+            appStore.themeConfig.plugins.giscus.theme_light
+          )
+        }
+        giscus.setAttribute(
+          'data-lang',
+          appStore.themeConfig.plugins.giscus.lang
+        )
+        giscus.setAttribute('crossorigin', 'anonymous')
+        document.head.appendChild(giscus)
+      }
     }
 
     /** Wait for config is ready */
@@ -166,6 +226,21 @@ export default defineComponent({
         if (!oldValue && newValue) {
           const cachePost = postStore.cachePost
           enabledComment(cachePost.title, cachePost.body, cachePost.uid)
+        }
+      }
+    )
+
+    watch(
+      () => appStore.theme,
+      () => {
+        if (
+          !appStore.themeConfig.plugins.gitalk.enable &&
+          !appStore.themeConfig.plugins.valine.enable &&
+          !appStore.themeConfig.plugins.twikoo.enable &&
+          !appStore.themeConfig.plugins.waline.enable &&
+          appStore.themeConfig.plugins.giscus.enable
+        ) {
+          enabledComment(postTitle.value, postBody.value, postUid.value)
         }
       }
     )
