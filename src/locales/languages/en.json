@@ -45,8 +45,8 @@
     "visit_count": "Total visit count",
     "button-all": "All",
     "paginator": {
-      "newer": "Newer",
-      "older": "Older",
+      "newer": "Pre",
+      "older": "Next",
       "prev": "Previous",
       "next": "Next"
     },
@@ -67,8 +67,26 @@
     "tips-open-search": "Open search",
     "default-category": "Article",
     "default-tag": "unsorted",
-    "empty-tag": "Current no tags were found.",
-    "pinned": "Pinned",
-    "featured": "Featured"
+    "empty-tag": "No tags right now.",
+    "empty-recent-comments": "No recent comments right now.",
+    "pinned": "Pin",
+    "featured": "Hot",
+    "page-views-value": "Page Views: ",
+    "unique_visitor-value": "Unique Visitors: ",
+    "site-running-for": "Up time: ",
+    "site-running-for-unit": "days",
+    "links": "Friend Links",
+    "links-slogan": "Improving with bloggers",
+    "links-random-visit": "Random visit",
+    "links-apply": "Apply friend list",
+    "links-badge-personal": "Personal",
+    "links-badge-personal-desc": "Record every single step of the way.",
+    "links-badge-tech": "Tech",
+    "links-badge-tech-desc": "Technology related bloggers.",
+    "links-badge-designer": "Designer",
+    "links-badge-designer-desc": "Design related bloggers.",
+    "links-badge-vip": "Sponsors",
+    "links-badge-vip-desc": "Recent sponsors",
+    "notification-random-jump": "Picking a lucky blogger to jump to."
   }
 }

@@ -1,80 +1,73 @@
 <template>
-  <div class="sidebar-box">
+  <div v-if="!!enabledCommentPlugin.recentComment" class="sidebar-box">
     <SubTitle :title="'titles.recent_comment'" icon="quote" />
     <ul>
-      <template v-if="comments.length > 0">
-        <li
-          class="
-            bg-ob-deep-900
-            px-2
-            py-3
-            mb-1.5
-            rounded-lg
-            flex flex-row
-            justify-items-center
-            items-center
-            shadow-sm
-            hover:shadow-ob
-            transition-shadow
-          "
-          v-for="comment in comments"
-          :key="comment.id"
+      <template v-if="isLoading === false">
+        <template v-if="comments.length > 0">
+          <li
+            class="bg-ob-deep-900 px-2 py-2 mb-1.5 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105"
+            v-for="comment in comments"
+            :key="comment.id"
+          >
+            <a
+              :href="`${comment.html_url}#${comment.id}`"
+              class="flex flex-row justify-items-center items-stretch cursor-pointer hover:opacity-100"
+            >
+              <div class="flex justify-start items-start">
+                <img
+                  :class="avatarClass"
+                  :src="comment.user.avatar_url"
+                  alt="comment-avatar"
+                />
+              </div>
+              <div class="flex-1 text-xs">
+                <div class="text-xs mb-2 pt-1">
+                  <span class="text-ob-secondary pr-2">
+                    <a class="font-bold" :href="comment.user.html_url">{{
+                      comment.user.login
+                    }}</a>
+                    <b
+                      class="ml-2 text-ob bg-ob-deep-800 py-0.5 px-1.5 rounded-md"
+                      v-if="comment.is_admin"
+                    >
+                      {{ t('settings.admin-user') }}
+                    </b>
+                  </span>
+                  <span class="text-ob-dim text-[0.65rem]">{{
+                    comment.created_at
+                  }}</span>
+                </div>
+                <div class="text-xs pb-1">
+                  {{ comment.body }}
+                </div>
+              </div>
+            </a>
+          </li>
+        </template>
+
+        <div
+          v-else
+          class="flex flex-row justify-center items-center text-ob-dim"
         >
-          <img
-            class="col-span-1 mr-2 rounded-full p-1"
-            :src="comment.user.avatar_url"
-            alt="comment-avatar"
-            height="40"
-            width="40"
+          <SvgIcon
+            class="mr-2"
+            icon-class="warning"
+            :svgType="SvgTypes.stroke"
+            stroke="var(--text-dim)"
           />
-          <div class="flex-1 text-xs">
-            <div class="text-xs">
-              <span class="text-ob pr-2">
-                {{ comment.user.login }}
-                <b
-                  class="
-                    text-ob-secondary
-                    bg-ob-deep-800
-                    py-0.5
-                    px-1.5
-                    rounded-md
-                    opacity-75
-                  "
-                  v-if="comment.is_admin"
-                >
-                  {{ t('settings.admin-user') }}
-                </b>
-              </span>
-              <p class="text-gray-500">{{ comment.created_at }}</p>
-            </div>
-            <div class="text-xs text-ob-bright">
-              {{ comment.body }}
-            </div>
-          </div>
-        </li>
+          {{ t('settings.empty-recent-comments') }}
+        </div>
       </template>
       <template v-else>
         <li
-          class="
-            bg-ob-deep-900
-            px-2
-            py-3
-            mb-1.5
-            rounded-lg
-            flex flex-row
-            justify-items-center
-            items-center
-            shadow-sm
-            hover:shadow-ob
-            transition-shadow
-          "
+          class="bg-ob-deep-900 px-2 py-3 mb-1.5 rounded-lg flex flex-row justify-items-center items-start shadow-sm transition-all"
           v-for="n in 7"
           :key="n"
         >
           <ob-skeleton
             class="col-span-1 mr-2 rounded-full p-1"
-            height="40px"
-            width="40px"
+            height="19px"
+            width="19px"
             :circle="true"
           />
           <div class="flex-1 text-xs">
@@ -82,40 +75,21 @@
               <span class="text-ob pr-2">
                 <ob-skeleton
                   tag="b"
-                  class="
-                    text-ob-secondary
-                    bg-ob-deep-800
-                    py-0.5
-                    px-1.5
-                    rounded-md
-                  "
+                  class="text-ob-secondary bg-ob-deep-800 py-0.5 px-1.5 rounded-md"
                   height="10px"
-                  width="66px"
+                  width="50px"
                 />
               </span>
-              <br />
               <ob-skeleton
                 tag="p"
-                class="
-                  text-ob-secondary
-                  bg-ob-deep-800
-                  py-0.5
-                  px-1.5
-                  rounded-md
-                "
+                class="text-ob-secondary bg-ob-deep-800 py-0.5 px-1.5 rounded-md"
                 height="10px"
-                width="96px"
+                width="40px"
               />
             </div>
             <div class="text-xs text-ob-bright">
               <ob-skeleton
-                class="
-                  text-ob-secondary
-                  bg-ob-deep-800
-                  py-0.5
-                  px-1.5
-                  rounded-md
-                "
+                class="text-ob-secondary bg-ob-deep-800 py-0.5 px-1.5 rounded-md"
                 height="10px"
                 width="126px"
               />
@@ -128,73 +102,56 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref, watch } from 'vue'
+import { computed, defineComponent, watch } from 'vue'
 import { SubTitle } from '@/components/Title'
-import { GithubComments } from '@/utils/github-api'
-import { LeanCloudComments } from '@/utils/leancloud-api'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 import { useAppStore } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
+import { SvgTypes } from '@/components/SvgIcon/index.vue'
+import useCommentPlugin from '@/hooks/useCommentPlugin'
 
 export default defineComponent({
-  name: 'ObRecentComment',
-  components: { SubTitle },
+  name: 'ArRecentComment',
+  components: { SubTitle, SvgIcon },
   setup() {
     const appStore = useAppStore()
     const { t } = useI18n()
-    let recentComments = ref([])
-
-    const initRecentComment = () => {
-      if (!appStore.configReady) return
-      if (
-        appStore.themeConfig.plugins.gitalk.enable &&
-        appStore.themeConfig.plugins.gitalk.recentComment
-      ) {
-        const githubComments = new GithubComments({
-          repo: appStore.themeConfig.plugins.gitalk.repo,
-          clientId: appStore.themeConfig.plugins.gitalk.clientID,
-          clientSecret: appStore.themeConfig.plugins.gitalk.clientSecret,
-          owner: appStore.themeConfig.plugins.gitalk.owner,
-          admin: appStore.themeConfig.plugins.gitalk.admin[0]
-        })
-
-        githubComments.getComments().then(response => {
-          recentComments.value = response
-        })
-      } else if (
-        appStore.themeConfig.plugins.valine.enable &&
-        appStore.themeConfig.plugins.valine.recentComment
-      ) {
-        const leadCloudComments = new LeanCloudComments({
-          appId: appStore.themeConfig.plugins.valine.app_id,
-          appKey: appStore.themeConfig.plugins.valine.app_key,
-          avatar: appStore.themeConfig.plugins.valine.avatar,
-          admin: appStore.themeConfig.plugins.valine.admin,
-          lang: appStore.themeConfig.plugins.valine.lang
-        })
-
-        leadCloudComments.getRecentComments(7).then(response => {
-          recentComments.value = response
-        })
-      }
-    }
+    const {
+      enabledCommentPlugin,
+      recentComments,
+      fetchRecentComment,
+      commentPluginLoading
+    } = useCommentPlugin()
 
     /** Wait for config is ready */
     watch(
       () => appStore.configReady,
       (newValue, oldValue) => {
         if (!oldValue && newValue) {
-          initRecentComment()
+          fetchRecentComment()
         }
       }
     )
 
-    onBeforeMount(initRecentComment)
-
     return {
-      comments: computed(() => {
-        return recentComments.value
+      avatarClass: computed(() => {
+        return {
+          'col-span-1 mr-2 h-6 w-6': true,
+          [appStore.themeConfig.theme.profile_shape]: true
+        }
       }),
+      isLoading: computed(() => commentPluginLoading.value),
+      comments: computed(() => recentComments.value),
+      isConfigReady: computed(() => appStore.configReady),
+      SvgTypes,
+      fetchRecentComment,
+      enabledCommentPlugin,
       t
+    }
+  },
+  mounted() {
+    if (this.isConfigReady) {
+      this.fetchRecentComment()
     }
   }
 })

@@ -2,12 +2,19 @@
   <div class="paginator">
     <ul>
       <li
-        class="text-ob-bright"
+        class="page-navigator text-ob-bright navigator-right"
         v-if="currentPage > 1"
         @click="pageChangeEmitter(currentPage - 1)"
       >
-        <svg-icon icon-class="arrow-left" />
-        {{ t('settings.paginator.newer') }}
+        <SvgIcon
+          class="font-bold"
+          icon-class="arrow-left"
+          height="1.25rem"
+          width="1.25rem"
+          fill="var(--text-accent)"
+          stroke="var(--text-accent)"
+        />
+        <span>{{ t('settings.paginator.newer') }}</span>
       </li>
       <li
         v-if="paginator.head !== 0"
@@ -22,7 +29,7 @@
         :class="{ active: currentPage === page }"
         @click="pageChangeEmitter(page)"
       >
-        {{ page }}
+        <span>{{ page }}</span>
       </li>
       <li
         v-if="paginator.end !== 0"
@@ -32,12 +39,19 @@
         {{ paginator.end }}
       </li>
       <li
-        class="text-ob-bright"
+        class="page-navigator text-ob-bright navigator-left"
         v-if="currentPage < pages"
         @click="pageChangeEmitter(currentPage + 1)"
       >
-        {{ t('settings.paginator.older') }}
-        <svg-icon icon-class="arrow-right" />
+        <span>{{ t('settings.paginator.older') }}</span>
+        <SvgIcon
+          class="font-bold"
+          icon-class="arrow-right"
+          height="1.25rem"
+          width="1.25rem"
+          fill="var(--text-accent)"
+          stroke="var(--text-accent)"
+        />
       </li>
     </ul>
   </div>
@@ -46,9 +60,11 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default defineComponent({
   name: 'ObPaginator',
+  components: { SvgIcon },
   emits: ['pageChange'],
   props: {
     pageTotal: {
@@ -133,13 +149,37 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .paginator {
-  @apply flex flex-row justify-center my-8;
+  @apply flex flex-row justify-center mt-8;
   ul {
     @apply flex flex-row;
     li {
-      @apply flex flex-row items-center uppercase font-extrabold cursor-pointer mr-2;
-      &:hover {
-        opacity: 0.5;
+      @apply flex items-center justify-center uppercase font-extrabold cursor-pointer mr-2 p-1 bg-ob-deep-800 rounded-lg overflow-hidden w-10 h-10;
+      svg,
+      span {
+        opacity: 0.7;
+        transition: 200ms all ease-in-out;
+      }
+      &.page-navigator {
+        @apply w-20;
+        &.navigator-right span {
+          @apply -mr-10 opacity-0;
+          transition: 300ms all ease-in-out;
+        }
+        &.navigator-left span {
+          @apply -ml-10 opacity-0;
+          transition: 300ms all ease-in-out;
+        }
+        &:hover.navigator-right span {
+          @apply opacity-100 mr-0;
+        }
+        &:hover.navigator-left span {
+          @apply opacity-100 ml-0;
+        }
+      }
+      &:hover:not(.navigator-right, .navigator-left) span,
+      &:hover svg {
+        opacity: 1;
+        transform: scale(1.25);
       }
       svg {
         @apply mx-2 font-extrabold text-ob;

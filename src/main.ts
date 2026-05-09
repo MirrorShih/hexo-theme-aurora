@@ -4,39 +4,38 @@ import { createApp } from 'vue'
 // also it's a much simpler State Management setup
 import { createPinia } from 'pinia'
 
-import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import '@/styles/index.scss'
 
 import App from './App.vue'
 import router from './router'
-import { i18n } from './locales'
+import i18n from './locales'
 import VueClickAway from 'vue3-click-away'
-import lazyPlugin from 'vue3-lazy'
+import VueLazyLoad from 'vue3-lazyload'
 
 import './router/guard' // router guards
 
-import { registerSvgIcon } from '@/icons'
+import 'virtual:svg-icons-register'
 import { registerObSkeleton } from '@/components/LoadingSkeleton'
 import { registerScrollSpy } from 'vue3-scroll-spy'
+import defaultCover from '@/assets/default-cover.jpg'
 
 const app = createApp(App)
   .use(createPinia())
   .use(router)
   .use(i18n)
   .use(VueClickAway)
-  .use(lazyPlugin, {
-    loading: require('@/assets/default-cover.jpg'),
-    error: require('@/assets/default-cover.jpg')
+  .use(VueLazyLoad, {
+    loading: defaultCover,
+    error: defaultCover
   })
 
-registerSvgIcon(app)
 registerObSkeleton(app)
 registerScrollSpy(app)
 
 app.mount('#app')
 
 console.log(
-  '%c Aurora is developed by TriDiamond%c',
+  '%c Aurora is developed by Benny Guo (三钻)%c',
   'background:#24272A; color:#73ddd7',
   '',
   'https://github.com/auroral-ui/hexo-theme-aurora'

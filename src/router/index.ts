@@ -1,74 +1,23 @@
 /* eslint-disable */
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home
-  },
-  {
-    path: '/404',
-    name: 'not-found',
-    component: () => import(/* webpackChunkName: "404" */ '../views/404.vue'),
-    hidden: true
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '../views/About.vue')
-  },
-  {
-    path: '/categories',
-    name: 'categories',
-    component: () =>
-      import(/* webpackChunkName: "categories" */ '../views/Category.vue')
-  },
-  {
-    path: '/archives',
-    name: 'archives',
-    component: () =>
-      import(/* webpackChunkName: "archives" */ '../views/Archives.vue')
-  },
-  {
-    path: '/tags',
-    name: 'tags',
-    component: () => import(/* webpackChunkName: "tags" */ '../views/Tag.vue')
-  },
-  {
-    path: '/tags/search',
-    name: 'tags-search',
-    component: () =>
-      import(/* webpackChunkName: "result" */ '../views/Result.vue')
-  },
-  {
-    path: '/post/:slug*',
-    name: 'post',
-    component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue'),
-    props: true
-  },
-  {
-    path: '/page/:slug*',
-    name: 'page',
-    component: () => import(/* webpackChunkName: "page" */ '../views/Page.vue'),
-    props: true
-  },
-  {
-    path: '/result',
-    name: 'result',
-    component: () =>
-      import(/* webpackChunkName: "result" */ '../views/Result.vue'),
-    props: true
-  },
-  // 404 page must be placed at the end !!!
-  { path: '/:catchAll(.*)', redirect: '/404', hidden: true }
-]
+import routes from '~pages'
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise(resolve => {
+      if (to.hash) {
+        setTimeout(() => {
+          resolve({ el: to.hash, behavior: 'smooth', top: 81 })
+        }, 1500)
+      } else if (savedPosition) {
+        resolve(savedPosition)
+      } else {
+        resolve({ top: 0 })
+      }
+    })
+  }
 })
 
 export default router

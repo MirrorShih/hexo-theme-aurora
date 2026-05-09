@@ -1,36 +1,15 @@
 <template>
-  <div class="inverted-main-grid py-8 gap-8 box-border">
+  <div class="inverted-main-grid py-7 gap-7 box-border">
     <div
-      class="
-        relative
-        overflow-hidden
-        h-56
-        lg:h-auto
-        rounded-2xl
-        bg-ob-deep-800
-        shadow-lg
-      "
+      class="relative overflow-hidden h-56 lg:h-auto rounded-2xl bg-ob-deep-800 shadow-lg"
     >
       <div
-        class="
-          ob-gradient-plate
-          opacity-90
-          relative
-          z-10
-          bg-ob-deep-900
-          rounded-2xl
-          flex
-          justify-start
-          items-end
-          px-8
-          pb-10
-          shadow-md
-        "
+        class="ob-gradient-plate opacity-90 relative z-10 bg-ob-deep-900 rounded-2xl flex justify-start items-end px-6 pb-10 shadow-md"
       >
-        <h2 class="text-3xl pb-8 lg:pb-16">
+        <h2 class="text-3xl pb-8 lg:pb-14">
           <p :style="gradientText">EDITOR'S SELECTION</p>
-          <span class="relative text-2xl text-ob-bright font-semibold">
-            <svg-icon class="inline-block" icon-class="hot" />
+          <span class="relative text-lg text-ob-bright font-semibold">
+            <SvgIcon class="inline-block" icon-class="hot" stroke="white" />
             {{ t('home.recommended') }}
           </span>
         </h2>
@@ -41,15 +20,15 @@
       />
     </div>
 
-    <ul class="grid lg:grid-cols-2 gap-8">
+    <ul class="grid lg:grid-cols-2 gap-7">
       <template v-if="featurePosts.length > 0">
         <li v-for="post in featurePosts" :key="post.slug">
-          <Article :data="post" />
+          <ArticleCard :data="post" />
         </li>
       </template>
       <template v-else>
         <li v-for="n in 2" :key="n">
-          <Article :data="{}" />
+          <ArticleCard :data="{}" />
         </li>
       </template>
     </ul>
@@ -59,17 +38,20 @@
 <script lang="ts">
 import { useAppStore } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
-import { computed, defineComponent, toRefs } from 'vue'
-import { Article } from '@/components/ArticleCard'
+import { PropType, StyleValue, computed, defineComponent, toRefs } from 'vue'
+import { ArticleCard } from '@/components/ArticleCard'
+import SvgIcon from '@/components/SvgIcon/index.vue'
+import { Post } from '@/models/Post.class'
 
 export default defineComponent({
   name: 'ObFeatureList',
   components: {
-    Article
+    ArticleCard,
+    SvgIcon
   },
   props: {
     data: {
-      type: Array,
+      type: Array as PropType<Post[]>,
       required: true
     }
   },
@@ -79,11 +61,11 @@ export default defineComponent({
     const { t } = useI18n()
 
     return {
-      gradientBackground: computed(() => {
-        return { background: appStore.themeConfig.theme.header_gradient_css }
-      }),
+      gradientBackground: computed(() => ({
+        background: appStore.themeConfig.theme.header_gradient_css
+      })),
       gradientText: computed(
-        () => appStore.themeConfig.theme.background_gradient_style
+        () => appStore.themeConfig.theme.background_gradient_style as StyleValue
       ),
       featurePosts,
       t

@@ -1,22 +1,14 @@
 <template>
-  <p
-    class="
-      relative
-      flex
-      items-center
-      pb-2
-      mb-4
-      text-xl text-ob-bright
-      uppercase
-    "
-  >
-    <svg-icon
+  <p class="relative flex items-center pb-2 mb-4 text-xl text-ob-bright">
+    <SvgIcon
       v-if="icon && side === 'left'"
       :icon-class="icon"
       class="inline-block mr-2"
+      fill="none"
+      stroke="currentColor"
     />
     <span :class="titleClass">{{ t(titleStr) }}</span>
-    <svg-icon
+    <SvgIcon
       v-if="icon && side === 'right'"
       :icon-class="icon"
       class="inline-block ml-2"
@@ -29,9 +21,11 @@
 import { useAppStore } from '@/stores/app'
 import { computed, defineComponent, toRefs } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SvgIcon from '@/components/SvgIcon/index.vue'
 
 export default defineComponent({
   name: 'ObSubTitle',
+  components: { SvgIcon },
   props: {
     title: {
       type: String,

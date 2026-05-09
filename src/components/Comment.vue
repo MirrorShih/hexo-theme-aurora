@@ -1,40 +1,28 @@
 <template>
-  <div
-    class="
-      bg-ob-deep-800
-      p-4
-      mt-8
-      lg:px-14 lg:py-10
-      rounded-2xl
-      shadow-xl
-      mb-8
-      lg:mb-0
-    "
-  >
-    <SubTitle :title="'titles.comment'" />
+  <div :class="wrapperClasses">
+    <MainTitle
+      :title="'titles.comment'"
+      icon="quote"
+      paddings="pb-2 pt-0"
+      text-size="text-2xl md:text-3xl"
+    />
     <div id="gitalk-container"></div>
     <div id="vcomments"></div>
+    <div id="tcomment"></div>
+    <div id="waline"></div>
+    <div class="giscus"></div>
   </div>
 </template>
 
 <script lang="ts">
-/**
- * Gitalk and Valine is imported through CDN
- * need to dereferencing these library globals
- *
- * Gitalk version 1.6
- * Valine version 1.4.14
- *
- * Check the usage of these version before
- * using these global variables.
- */
-declare const Gitalk: any
-declare const Valine: any
-
 import { useAppStore } from '@/stores/app'
-import { defineComponent, onMounted, toRefs, watch } from 'vue'
-import { SubTitle } from '@/components/Title'
+import { computed, defineComponent, onMounted, toRefs, watch } from 'vue'
+import { MainTitle } from '@/components/Title'
 import { usePostStore } from '@/stores/post'
+import { twikooInit } from '@/utils/comments/twikoo-api'
+import { githubInit } from '@/utils/comments/github-api'
+import { valineInit } from '@/utils/comments/valine-api'
+import { walineInit } from '@/utils/comments/waline-api'
 
 export default defineComponent({
   name: 'ObComment',
@@ -55,13 +43,14 @@ export default defineComponent({
       default: ''
     }
   },
-  components: { SubTitle },
+  components: { MainTitle },
   setup(props) {
     const postTitle = toRefs(props).title
     const postBody = toRefs(props).body
     const postUid = toRefs(props).uid
     const appStore = useAppStore()
     const postStore = usePostStore()
+    let waline: any = undefined
 
     const enabledComment = (
       postTitle: string,
@@ -100,35 +89,133 @@ export default defineComponent({
             ? 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
             : appStore.themeConfig.plugins.gitalk.proxy
 
-        const gitalk = new Gitalk({
-          clientID: appStore.themeConfig.plugins.gitalk.clientID,
-          clientSecret: appStore.themeConfig.plugins.gitalk.clientSecret,
-          repo: appStore.themeConfig.plugins.gitalk.repo, // The repository of store comments,
-          owner: appStore.themeConfig.plugins.gitalk.owner,
-          admin: appStore.themeConfig.plugins.gitalk.admin,
-          id: uid, // Ensure uniqueness and length less than 50
-          language: appStore.themeConfig.plugins.gitalk.language,
-          distractionFreeMode: true, // Facebook-like distraction free mode
-          title: title,
-          body: body,
-          proxy: proxy
-        })
+        const { clientID, clientSecret, repo, owner, admin, language } =
+          appStore.themeConfig.plugins.gitalk
 
-        gitalk.render('gitalk-container')
+        githubInit({
+          clientID,
+          clientSecret,
+          repo,
+          owner,
+          admin,
+          language,
+          uid,
+          title,
+          body,
+          proxy
+        })
       } else if (appStore.themeConfig.plugins.valine.enable) {
-        new Valine({
-          el: '#vcomments',
-          appId: appStore.themeConfig.plugins.valine.app_id,
-          appKey: appStore.themeConfig.plugins.valine.app_key,
-          avatar: appStore.themeConfig.plugins.valine.avatar,
-          placeholder: appStore.themeConfig.plugins.valine.placeholder,
-          visitor: appStore.themeConfig.plugins.valine.visitor,
-          lang: appStore.themeConfig.plugins.valine.lang,
-          meta: appStore.themeConfig.plugins.valine.meta,
-          requiredFields: appStore.themeConfig.plugins.valine.requiredFields,
-          avatarForce: appStore.themeConfig.plugins.valine.avatarForce,
+        const {
+          app_id,
+          app_key,
+          avatar,
+          placeholder,
+          visitor,
+          lang,
+          meta,
+          requiredFields,
+          avatarForce
+        } = appStore.themeConfig.plugins.valine
+
+        valineInit({
+          appId: app_id,
+          appKey: app_key,
+          avatar,
+          placeholder,
+          visitor,
+          lang,
+          meta,
+          requiredFields,
+          avatarForce,
           path: window.location.pathname // Make sure updating pathname
         })
+      } else if (appStore.themeConfig.plugins.twikoo.enable) {
+        const { envId, region, lang } = appStore.themeConfig.plugins.twikoo
+        twikooInit({ envId, region, lang, path: window.location.pathname })
+      } else if (appStore.themeConfig.plugins.waline.enable) {
+        const {
+          serverURL,
+          login,
+          reaction,
+          meta,
+          requiredMeta,
+          commentSorting,
+          wordLimit,
+          imageUploader,
+          pageSize
+        } = appStore.themeConfig.plugins.waline
+
+        waline = walineInit({
+          serverURL,
+          lang: appStore.locale ?? 'en',
+          login,
+          reaction,
+          meta,
+          requiredMeta,
+          commentSorting,
+          wordLimit,
+          imageUploader,
+          pageSize
+        })
+      }
+      else if(appStore.themeConfig.plugins.giscus.enable) {
+        let old_giscus = document.getElementById('giscus')
+        if (old_giscus) {
+          document.head.removeChild(old_giscus)
+        }
+        let giscus = document.createElement('script')
+        giscus.async = true
+        giscus.setAttribute('src', 'https://giscus.app/client.js')
+        giscus.setAttribute('id', 'giscus')
+        giscus.setAttribute(
+          'data-repo',
+          appStore.themeConfig.plugins.giscus.repo
+        )
+        giscus.setAttribute(
+          'data-repo-id',
+          appStore.themeConfig.plugins.giscus.repo_id
+        )
+        giscus.setAttribute(
+          'data-category',
+          appStore.themeConfig.plugins.giscus.category
+        )
+        giscus.setAttribute(
+          'data-category-id',
+          appStore.themeConfig.plugins.giscus.category_id
+        )
+        giscus.setAttribute(
+          'data-mapping',
+          appStore.themeConfig.plugins.giscus.mapping
+        )
+        giscus.setAttribute(
+          'data-reactions-enabled',
+          appStore.themeConfig.plugins.giscus.reactions_enabled
+        )
+        giscus.setAttribute(
+          'data-emit-metadata',
+          appStore.themeConfig.plugins.giscus.emit_meta_data
+        )
+        giscus.setAttribute(
+          'data-input-position',
+          appStore.themeConfig.plugins.giscus.input_position
+        )
+        if (appStore.theme === 'theme-dark') {
+          giscus.setAttribute(
+            'data-theme',
+            appStore.themeConfig.plugins.giscus.theme_dark
+          )
+        } else {
+          giscus.setAttribute(
+            'data-theme',
+            appStore.themeConfig.plugins.giscus.theme_light
+          )
+        }
+        giscus.setAttribute(
+          'data-lang',
+          appStore.themeConfig.plugins.giscus.lang
+        )
+        giscus.setAttribute('crossorigin', 'anonymous')
+        document.head.appendChild(giscus)
       }
     }
 
@@ -143,9 +230,46 @@ export default defineComponent({
       }
     )
 
+    watch(
+      () => appStore.theme,
+      () => {
+        if (
+          !appStore.themeConfig.plugins.gitalk.enable &&
+          !appStore.themeConfig.plugins.valine.enable &&
+          !appStore.themeConfig.plugins.twikoo.enable &&
+          !appStore.themeConfig.plugins.waline.enable &&
+          appStore.themeConfig.plugins.giscus.enable
+        ) {
+          enabledComment(postTitle.value, postBody.value, postUid.value)
+        }
+      }
+    )
+
+    /** Updating comments base on current locale */
+    watch(
+      () => appStore.locale,
+      (newLocale, oldLocale) => {
+        if (waline && newLocale !== undefined && newLocale !== oldLocale) {
+          waline.update({
+            lang: newLocale
+          })
+        }
+      }
+    )
+
     onMounted(() => {
       enabledComment(postTitle.value, postBody.value, postUid.value)
     })
+
+    return {
+      wrapperClasses: computed(() => {
+        return {
+          'bg-ob-deep-800 p-4 mt-8 lg:px-14 lg:py-10 rounded-2xl shadow-xl mb-8 lg:mb-0':
+            true,
+          [`comment-${appStore.themeConfig.theme.profile_shape}`]: true
+        }
+      })
+    }
   }
 })
 </script>
@@ -333,6 +457,283 @@ export default defineComponent({
           border-left: 0.25em solid var(--bg-sub-accent-55);
         }
       }
+    }
+  }
+}
+
+#twikoo {
+  .tk-comments {
+    @apply pt-2;
+  }
+
+  .tk-input {
+    @apply bg-ob-deep-900;
+  }
+
+  .tk-meta-input input {
+    @apply bg-ob-deep-900;
+  }
+
+  .el-input__inner:focus,
+  .el-textarea__inner:focus {
+    border-color: var(--text-accent);
+  }
+
+  .el-button--primary {
+    background: var(--main-gradient);
+    border: none;
+    color: #fff;
+    &:hover {
+      color: #fff;
+      opacity: 0.5;
+    }
+  }
+
+  .tk-icon.__comments {
+    color: var(--text-accent);
+  }
+
+  .tk-action-icon {
+    color: var(--text-accent);
+  }
+
+  .tk-comment {
+    @apply px-4 pt-6 pb-6 bg-ob-deep-900 mb-2 rounded-lg;
+    transition: var(--trans-ease);
+    &:hover {
+      box-shadow: var(--accent-shadow);
+    }
+  }
+
+  .tk-avatar {
+    border: none;
+  }
+
+  .tk-nick {
+    color: var(--text-accent);
+    font-weight: 700;
+  }
+
+  .tk-comments-count {
+    > span:first-of-type {
+      color: var(--text-accent);
+    }
+  }
+}
+
+.comment-diamond-avatar #waline {
+  .wl-user img,
+  .wl-login-nick img {
+    clip-path: polygon(50% 3%, 91% 25%, 91% 75%, 50% 97%, 9% 75%, 9% 25%);
+  }
+}
+.comment-circle-avatar #waline {
+  .wl-user img,
+  .wl-login-nick img {
+    @apply rounded-full border-ob-deep-900;
+    border-width: 6px;
+  }
+}
+.comment-rounded-avatar #waline {
+  .wl-user img,
+  .wl-login-nick img {
+    @apply rounded-2xl border-ob-deep-900;
+    border-width: 6px;
+  }
+}
+
+#waline {
+  --waline-theme-color: var(--text-accent);
+  --waline-border: var(--background-secondary);
+  --waline-bgcolor: var(--background-primary);
+  --waline-bgcolor-light: var(--background-secondary);
+  --waline-badge-color: var(--text-accent);
+  --waline-disabled-bgcolor: var(--text-dim);
+  --waline-avatar-size: 2.25rem;
+  --waline-m-avatar-size: 1.25rem;
+  .wl-editor {
+    @apply p-2 box-border bg-ob-deep-800 mx-1 my-0 opacity-50;
+    transition: 0.3s opacity linear;
+    &:focus {
+      @apply opacity-100;
+    }
+  }
+
+  .wl-login-nick {
+    @apply text-lg lg:text-2xl;
+    color: var(--text-sub-accent);
+    img {
+      @apply h-6 w-6 lg:h-9 lg:w-9;
+    }
+  }
+
+  .wl-text-number {
+    @apply hidden lg:block;
+  }
+
+  .wl-avatar {
+    @apply h-6 w-6 lg:h-9 lg:w-9 mr-3;
+  }
+
+  .wl-header {
+    @apply flex gap-2 mb-2 ml-1 mr-2;
+    .wl-header-item {
+      @apply bg-ob-deep-800 rounded-md;
+      label {
+        @apply font-bold;
+      }
+      input {
+        @apply px-2 py-1 h-full w-full bg-ob-deep-800 opacity-50;
+        transition: 0.3s opacity ease-in-out;
+        &:focus {
+          @apply opacity-100;
+        }
+      }
+    }
+    border-bottom-width: 0;
+  }
+
+  .wl-input,
+  .wl-input.wl-nick {
+    @apply text-xs text-ob-dim;
+  }
+
+  .wl-nick {
+    @apply text-xl lg:text-2xl;
+    color: var(--text-sub-accent);
+  }
+
+  .wl-cards {
+    @apply flex flex-col gap-2 pb-4;
+
+    .wl-user {
+      @apply flex justify-center pr-2 lg:pr-4 bg-ob-deep-900 mt-1.5;
+      margin-inline-end: 0;
+      .verified-icon {
+        @apply left-4 top-6 lg:left-6 lg:top-8;
+      }
+      img {
+        @apply h-6 w-6 lg:h-9 lg:w-9;
+      }
+      svg {
+        position: absolute;
+        top: calc(2.25rem * 3 / 4);
+        inset-inline-start: calc(2.2rem * 3 / 4);
+      }
+    }
+  }
+
+  .wl-comment {
+    @apply flex flex-col bg-ob-deep-900 p-4 rounded-lg;
+  }
+
+  .wl-login-info {
+    @apply flex flex-row items-center max-w-none mt-0;
+    .wl-logout-btn {
+      top: 0;
+      inset-inline-end: -0.5rem;
+    }
+    a.wl-login-nick {
+      @apply flex w-full;
+    }
+  }
+
+  .wl-card-item {
+    @apply bg-ob-deep-900 p-2 lg:p-4 rounded-lg;
+    .wl-card-item {
+      @apply shadow-ob mb-2;
+    }
+  }
+
+  .wl-card {
+    @apply pt-1 lg:pt-2 pb-0 border-b-0;
+  }
+
+  .wl-num {
+    color: var(--text-accent);
+  }
+
+  .primary.wl-btn {
+    @apply px-4 text-white;
+    border: none;
+    background: var(--main-gradient);
+    transition: var(--trans-ease);
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  .wl-card {
+    .wl-quote {
+      border-inline-start: none;
+    }
+
+    .wl-delete,
+    .wl-like,
+    .wl-reply,
+    .wl-edit {
+      color: var(--text-dim);
+    }
+
+    .wl-edit,
+    .wl-delete,
+    .wl-like {
+      @apply hidden lg:inline-flex;
+    }
+
+    .wl-badge {
+      @apply text-[0.55rem] text-xs px-1 py-0.5 me-0 mr-2 box-border border-none bg-ob-accent-55 text-ob;
+      &:first-of-type {
+        @apply text-white;
+        background: var(--main-gradient);
+      }
+      &:nth-of-type(2) {
+        @apply hidden lg:inline-flex;
+      }
+    }
+  }
+
+  .wl-sort {
+    li:hover {
+      color: var(--text-accent);
+    }
+  }
+
+  .wl-head {
+    @apply flex items-center mb-2;
+    .wl-time {
+      @apply mr-auto;
+    }
+  }
+
+  .wl-meta {
+    @apply mb-2;
+    span {
+      @apply rounded-md py-0.5 px-1.5 me-1 text-[0.55rem] lg:text-xs;
+    }
+  }
+
+  .wl-header-item {
+    @apply items-center;
+  }
+
+  .wl-admin-actions {
+    @apply pt-4;
+    .wl-comment-status {
+    }
+    .wl-btn {
+      @apply py-1.5 px-2;
+      font-size: 0.65rem;
+    }
+    .wl-btn.wl-approved:disabled {
+      @apply bg-ob-deep-800 text-ob-normal;
+    }
+  }
+
+  .wl-comment-actions {
+    @apply flex gap-1.5;
+    > *:hover {
+      color: var(--text-accent);
     }
   }
 }

@@ -24,11 +24,29 @@
 }
 
 .diamond-icon {
-  @apply w-12 h-12 text-xl flex items-center justify-center text-ob-bright hover:opacity-50 transition cursor-pointer;
+  @apply w-[2.7rem] h-[2.7rem] text-xl flex items-center justify-center text-ob-bright hover:opacity-50 transition cursor-pointer;
 }
 
 html {
   scrollbar-color: rgba(82, 82, 82, 0.8) transparent;
+  height: 100%;
+  font-size: 18px;
+}
+
+body {
+  min-height: 100%;
+  font-size: 16px;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei";
+  line-height: 2;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+  font-size: inherit !important;
 }
 
 html::-webkit-scrollbar {
@@ -63,4 +81,68 @@ div::-webkit-scrollbar-thumb {
 div::-webkit-scrollbar-track {
   border: none;
   background: transparent !important;
+}
+
+b {
+  @apply font-bold text-ob-bright;
+}
+
+.highlighted {
+  @apply relative;
+}
+
+.highlighted:before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(130deg,
+      rgb(36, 198, 220, 0.5),
+      rgb(84, 51, 255, 0.5) 41.07%,
+      rgb(255, 0, 153, 0.5) 76.05%);
+  transform: translate3d(0px, 25px, 0) scale(0.85);
+  filter: blur(20px);
+  opacity: var(0.7);
+  transition: opacity 0.3s;
+  border-radius: inherit;
+}
+
+/*
+  * Prevents issues when the parent creates a
+  * stacking context. (For example, using the transform
+  * property )
+  */
+.highlighted::after {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: inherit;
+  border-radius: inherit;
+}
+
+@keyframes opacity_show {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes opacity_hide {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

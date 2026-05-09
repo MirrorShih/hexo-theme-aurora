@@ -7,12 +7,13 @@ import {
   Categories,
   Post,
   PostList,
-  SpecificPostsList,
+  SpecificPostListRaw,
   Tags
 } from '@/models/Post.class'
 import { Article, Page } from '@/models/Article.class'
 import { Statistic } from '@/models/Statistic.class'
 import { SearchIndexes } from '@/models/Search.class'
+import { paginator } from '@/utils'
 
 // GET /api/site.json
 export async function fetchHexoConfig(): Promise<AxiosResponse<any>> {
@@ -26,18 +27,44 @@ export async function fetchPostsList(
   return request.get<PostList>(`/posts/${currentPage}.json`)
 }
 
+// GET /api/posts/:pageNum.json (default 1.json)
+export async function fetchArchivesList(
+  currentPage: number
+): Promise<AxiosResponse<any>> {
+  return request.get<PostList>(`/archives/${currentPage}.json`)
+}
+
 // GET /api/tags/:TagName.json
 export async function fetchPostsListByTag(
-  tagName: string
+  tagName: string,
+  page: number,
+  pageSize: number
 ): Promise<AxiosResponse<any>> {
-  return request.get<SpecificPostsList>(`/tags/${tagName}.json`)
+  const response = await request.get<SpecificPostListRaw>(
+    `/tags/${tagName}.json`
+  )
+
+  response.data.postlist = paginator(response.data.postlist, page, pageSize)
+
+  return response
 }
 
 // GET /api/categories/:slug.json
 export async function fetchPostsListByCategory(
-  categoryName: string
-): Promise<AxiosResponse<any>> {
-  return request.get<SpecificPostsList>(`/categories/${categoryName}.json`)
+  categoryName: string,
+  page: number,
+  pageSize: number
+) {
+  const response = await request.get<SpecificPostListRaw>(
+    `/categories/${categoryName}.json`
+  )
+
+  response.data.pageSize = pageSize
+  response.data.total = response.data.postlist.length
+  response.data.pageCount = Math.ceil(response.data.postlist.length / pageSize)
+  response.data.postlist = paginator(response.data.postlist, page, pageSize)
+
+  return response
 }
 
 // GET /api/articles/:Slug.json

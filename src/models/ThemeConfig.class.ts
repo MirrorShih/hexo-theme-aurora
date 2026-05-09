@@ -10,6 +10,7 @@ interface ThemeRaw {
     custom_socials: GeneralOptions
     site_meta: GeneralOptions
     plugins: GeneralOptions
+    footer_links: FooterLink[]
     version: string
   }
 }
@@ -22,8 +23,8 @@ interface StringConfig {
   [key: string]: string
 }
 
-interface GeneralOptions {
-  [key: string]: any
+interface GeneralOptions<T = any> {
+  [key: string]: T
 }
 
 export class ThemeConfig {
@@ -41,6 +42,8 @@ export class ThemeConfig {
   site_meta: SiteMeta = new SiteMeta()
   /** Plugin configs */
   plugins: Plugins = new Plugins()
+  /** Footer Links configs */
+  footerLinks: FooterLinks = new FooterLinks()
   /** Theme version */
   version = ''
 
@@ -59,6 +62,7 @@ export class ThemeConfig {
       this.socials = new Social(rawConfig.socials)
       this.plugins = new Plugins(rawConfig)
       this.site_meta = new SiteMeta(rawConfig.site_meta)
+      this.footerLinks = new FooterLinks(rawConfig.footer_links)
       this.version = rawConfig.version
     }
   }
@@ -74,7 +78,8 @@ export class ThemeMenu implements ObMenu {
       name: 'Home',
       path: '/',
       i18n: {
-        cn: '首页',
+        'zh-CN': '首页',
+        'zh-TW': '首頁',
         en: 'Home'
       }
     })
@@ -91,7 +96,8 @@ export class ThemeMenu implements ObMenu {
         name: 'About',
         path: '/about',
         i18n: {
-          cn: '关于',
+          'zh-CN': '关于',
+          'zh-TW': '關於',
           en: 'About'
         }
       },
@@ -99,7 +105,8 @@ export class ThemeMenu implements ObMenu {
         name: 'Archives',
         path: '/archives',
         i18n: {
-          cn: '归档',
+          'zh-CN': '归档',
+          'zh-TW': '歸檔',
           en: 'Archives'
         }
       },
@@ -107,8 +114,18 @@ export class ThemeMenu implements ObMenu {
         name: 'Tags',
         path: '/tags',
         i18n: {
-          cn: '标签',
+          'zh-CN': '标签',
+          'zh-TW': '標簽',
           en: 'Tags'
+        }
+      },
+      Links: {
+        name: 'Links',
+        path: '/links',
+        i18n: {
+          'zh-CN': '友情链接',
+          'zh-TW': '友情鏈接',
+          en: 'Friend Links'
         }
       }
     }
@@ -117,12 +134,18 @@ export class ThemeMenu implements ObMenu {
     if (raw) {
       // Theme default menus
       for (const menu of defaultMenus) {
-        if (typeof raw[menu] === 'boolean' && raw[menu]) {
+        const menuType = typeof raw[menu]
+        if ((menuType === 'boolean' || menuType === 'object') && raw[menu]) {
           Object.assign(this.menus, { [menu]: new Menu(extract[menu]) })
         }
       }
       // Theme custom menus
       for (const otherMenu of Object.keys(raw)) {
+        // Updating the i18n config from the menu config for default menus
+        if (defaultMenus.indexOf(otherMenu) > 0 && raw[otherMenu].i18n) {
+          Object.assign(this.menus[otherMenu].i18n, { ...raw[otherMenu].i18n })
+        }
+
         if (defaultMenus.indexOf(otherMenu) < 0 && raw[otherMenu].name) {
           Object.assign(this.menus, {
             [otherMenu]: new Menu(raw[otherMenu])
@@ -133,13 +156,21 @@ export class ThemeMenu implements ObMenu {
   }
 }
 
+enum LocalesTypes {
+  en,
+  'zh-CN',
+  'zh-TW'
+}
+
+export type Locales = keyof typeof LocalesTypes
+
 export class Menu {
   /** Name of the menu */
   name = ''
   /** Vue router path for the menu */
   path = ''
   /** Translation key for vue-i18n */
-  i18n: { cn?: string; en?: string } = {}
+  i18n: Partial<Record<Locales, string>> = {}
   /** Sub menus */
   children: Menu[] = []
 
@@ -154,8 +185,8 @@ export class Menu {
     this.i18n = menu.i18n ? menu.i18n : {}
     this.children = menu.children
       ? Object.keys(menu.children).map(
-          (key: string) => new Menu(menu.children[key])
-        )
+        (key: string) => new Menu(menu.children[key])
+      )
       : []
   }
 }
@@ -355,6 +386,8 @@ export class CustomSocials {
 export class Site {
   /** Website subtitle (used after `-`) */
   subtitle = ''
+  /** Slog use in the title */
+  slogan = ''
   /** Author of the blog website */
   author = ''
   /** Author's nick name */
@@ -362,7 +395,7 @@ export class Site {
   /** Website description (used in the header meta tag) */
   description = ''
   /** Blog's default language */
-  language = 'en'
+  language: Locales = 'en'
   /** Allow use to change blog's locale */
   multi_language = true
   /** Site logo or brand logo */
@@ -379,6 +412,8 @@ export class Site {
     number: '',
     link: ''
   }
+  // Start date when the blog first started running
+  started_date = ''
 
   /**
    * Model class for Site general settings
@@ -401,9 +436,9 @@ export class SiteMeta {
     locale: string
     prismjs: string[]
   } = {
-    locale: 'en',
-    prismjs: []
-  }
+      locale: 'en',
+      prismjs: []
+    }
   favicon = ''
 
   /**
@@ -424,7 +459,7 @@ export class SiteMeta {
 
 type MetaAttributes = 'nick' | 'mail' | 'link'
 
-interface PluginsData {
+export interface PluginsData {
   gitalk: {
     enable: boolean
     autoExpand: boolean
@@ -452,10 +487,48 @@ interface PluginsData {
     admin: string
     recentComment: boolean
   }
+
+  twikoo: {
+    enable: boolean
+    envId: string
+    recentComment: boolean
+    region?: string
+    lang: string
+  }
+
+  waline: {
+    enable: boolean
+    recentComment: boolean
+    serverURL: string
+    reaction: boolean
+    login: string
+    meta: string[] | never[]
+    requiredMeta: string[] | never[]
+    imageUploader?: boolean
+    wordLimit: number | number[]
+    pageSize: number
+    commentSorting: string
+  }
+
+  giscus: {
+    enable: boolean
+    repo: string
+    repo_id: string
+    category: string
+    category_id: string
+    mapping: string
+    lang: string
+    reactions_enabled: string
+    emit_meta_data: string
+    input_position: string
+  }
+
   recent_comments: boolean
+
   busuanzi: {
     enable: boolean
   }
+
   copy_protection: {
     enable: boolean
     author: {
@@ -471,6 +544,7 @@ interface PluginsData {
       en: string
     }
   }
+
   aurora_bot: {
     enable: boolean
     locale: string
@@ -507,6 +581,38 @@ export class Plugins implements PluginsData {
     avatarForce: false,
     admin: '',
     recentComment: false
+  }
+  twikoo = {
+    enable: false,
+    envId: '',
+    region: undefined,
+    recentComment: false,
+    lang: ''
+  }
+  waline = {
+    enable: false,
+    recentComment: false,
+    serverURL: '',
+    reaction: false,
+    login: 'disable',
+    meta: [],
+    requiredMeta: [],
+    imageUploader: false,
+    wordLimit: 0,
+    pageSize: 10,
+    commentSorting: 'latest'
+  }
+  giscus = {
+    enable: false,
+    repo: '',
+    repo_id: '',
+    category: '',
+    category_id: '',
+    mapping: '',
+    lang: '',
+    reactions_enabled: '',
+    emit_meta_data: '',
+    input_position: ''
   }
   recent_comments = false
   busuanzi = {
@@ -546,6 +652,30 @@ export class Plugins implements PluginsData {
           Object.assign(this, { [key]: raw[key] })
         }
       }
+    }
+  }
+}
+
+export interface FooterLink {
+  title: string
+  links: {
+    title: string
+    url: string
+  }[]
+  mode?: 'links'
+}
+
+export class FooterLinks {
+  data: FooterLink[] = []
+
+  /**
+   * Model class for Site meta settings
+   *
+   * @param raw - Config data generated from Hexo
+   */
+  constructor(raw?: FooterLink[]) {
+    if (raw) {
+      Object.assign(this.data, raw)
     }
   }
 }

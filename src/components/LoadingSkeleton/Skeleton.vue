@@ -5,7 +5,6 @@ import { SkeletonStyle } from './SkeletonTheme.vue'
 const isEmptyVNode = (children: any) => {
   if (!children) return true
   const firstNode = children()[0]
-  console.log('firstNode', firstNode)
   let str = firstNode.text
   if (str) {
     // remove all line-break and space character
@@ -42,7 +41,7 @@ export default defineComponent({
   setup(props, { slots }) {
     const themeStyle = inject('_themeStyle', SkeletonStyle)
     const theme = inject('_skeletonTheme', { loading: false })
-    let isLoading = toRefs(props).loading
+    const isLoading = toRefs(props).loading
 
     return {
       themeStyle,

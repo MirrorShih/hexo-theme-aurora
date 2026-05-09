@@ -1,6 +1,8 @@
 <template>
-  <ul class="breadcrumbs flex flex-row gap-6 text-white">
-    <li>{{ t('menu.home') }}</li>
+  <ul class="breadcrumbs flex flex-row gap-6 text-white z-50 px-4">
+    <li>
+      {{ t('menu.home') }}
+    </li>
     <li>{{ current }}</li>
   </ul>
 </template>
@@ -10,7 +12,7 @@ import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
-  name: 'Breadcrumb',
+  name: 'ArBreadcrumbBar',
   props: {
     current: String
   },
