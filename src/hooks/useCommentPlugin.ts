@@ -49,6 +49,12 @@ export default function useCommentPlugin() {
       return res
     }
 
+    if (!!plugins.giscus.enable) {
+      res.plugin = 'giscus'
+      res.recentComment = false
+      return res
+    }
+
     return res
   })
 
