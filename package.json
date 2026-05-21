@@ -21,7 +21,7 @@
   "scripts": {
     "serve": "vite",
     "build": "vite build --mode production",
-    "postbuild": "cat source/",
+    "postbuild": "node ./build/scripts/inject-hexo-helpers.js",
     "lint": "eslint --ext .js,.vue .",
     "preview": "vite preview",
     "env:local": "node ./build/scripts/config-script.js local",
