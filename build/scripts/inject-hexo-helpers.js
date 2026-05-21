@@ -6,13 +6,13 @@ const layoutFile = path.join(__dirname, '../../layout/index.ejs')
 try {
     let content = fs.readFileSync(layoutFile, 'utf-8')
 
-    const hasOpenGraph = content.includes('open_graph()')
+    const hasOpenGraph = content.includes('open_graph({image: page.cover})')
     const hasTitleTag = content.includes('<title>')
     let injected = false
     let injectContent = ''
 
     if (!hasOpenGraph) {
-        injectContent += '  <%- open_graph() %>\n'
+        injectContent += '  <%- open_graph({image: page.cover}) %>\n'
     }
     if (!hasTitleTag) {
         injectContent += '  <title><%- page.title ? page.title + " | " + config.title : config.title %></title>\n'
@@ -26,11 +26,11 @@ try {
 
     if (injected) {
         const injectedHelpers = []
-        if (!hasOpenGraph) injectedHelpers.push('open_graph()')
+        if (!hasOpenGraph) injectedHelpers.push('open_graph({image: page.cover})')
         if (!hasTitleTag) injectedHelpers.push('title tag')
         console.log(`✓ Injected ${injectedHelpers.join(' and ')}`)
     } else {
-        console.log('✓ open_graph() helper and title tag already present')
+        console.log('✓ open_graph({image: page.cover}) helper and title tag already present')
     }
 } catch (error) {
     console.error('Error injecting hexo helpers:', error.message)
