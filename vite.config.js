@@ -62,7 +62,26 @@ export default ({ mode }) => {
         template: templatePath
       }),
       vue(),
-      Pages({})
+      Pages({}),
+      {
+        name: 'hexo-ejs-injector',
+        enforce: 'post',
+        transformIndexHtml: {
+          order: 'post', // Forces this hook to run AFTER the minifier
+          handler(html) {
+            return html
+              // Regex handles cases where the minifier strips quotes (e.g., name=hexo-inject-title)
+              .replace(
+                /<meta\s+name=["']?hexo-inject-title["']?\s*\/?>/i,
+                '<title><%- page.title ? page.title + " | " + config.title : config.title %></title>'
+              )
+              .replace(
+                /<meta\s+name=["']?hexo-inject-opengraph["']?\s*\/?>/i,
+                '<%- open_graph() %>'
+              );
+          }
+        }
+      }
     ],
     resolve: {
       alias: {
