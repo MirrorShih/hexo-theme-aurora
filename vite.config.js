@@ -62,7 +62,22 @@ export default ({ mode }) => {
         template: templatePath
       }),
       vue(),
-      Pages({})
+      Pages({}),
+      // Inject directly into the head tag
+      {
+        name: 'hexo-ejs-injector',
+        enforce: 'post', // Ensures this runs AFTER vite-plugin-html's strict parsing
+        transformIndexHtml(html) {
+
+          const hexoTags = `
+    <title><%- page.title ? page.title + " | " + config.title : config.title %></title>
+    <%- open_graph() %>
+`;
+
+          // Find the <head> tag and insert our tags left after it
+          return html.replace('<head>', `<head>${hexoTags}`);
+        }
+      }
     ],
     resolve: {
       alias: {
